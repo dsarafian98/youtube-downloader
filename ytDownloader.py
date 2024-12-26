@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from pytube import YouTube, Playlist
+from pytubefix import YouTube, Playlist
 import os
 
 def downloadVid(url: str, outpath: str = "./", myTitle: str = "", extension: str = ".mp4"): 
@@ -15,24 +15,27 @@ def downloadVid(url: str, outpath: str = "./", myTitle: str = "", extension: str
 	mp4_369p_files.download(outpath, myTitle + extension)
 
 def downloadAudio(url: str, outpath: str = "./", myTitle: str = "", extension: str = ""):
-	yt = YouTube(url)
-	title = yt.title
-	print(title)
-	print(outpath)
+    yt = YouTube(url)
+    #yt = yt.from_id(yt.video_id)
+    title = yt.title
+    print(title)
+    print(outpath)
 
-	if (myTitle == ""):
-		myTitle = title
+    if (myTitle == ""):
+        myTitle = title
 
-	mp4_audio = yt.streams.filter(only_audio=True).first()
-	out_file=mp4_audio.download(outpath)
-	base, ext = os.path.splitext(out_file)
-	if (extension != ""):
-		command = f'ffmpeg -i out_file {myTitle}.mp3'
-		os.system(command)
-		os.remove(out_file)
-	else:
-		new_file = outpath + "/" +  myTitle + '.mp3'
-		os.rename(out_file, new_file)
+    mp4_audio = yt.streams.filter(only_audio=True).first()
+    out_file=mp4_audio.download(outpath)
+    base, ext = os.path.splitext(out_file)
+    
+    #ffmpeg doesn't work
+    if (extension != ""):
+        command = f'ffmpeg -i out_file {myTitle}.mp3'
+        os.system(command)
+        os.remove(out_file)
+    else:
+        new_file = outpath + "/" +  myTitle + '.mp3'
+        os.rename(out_file, new_file)
 
 def downloadPlaylist(playlistUrl: str, outpath: str="./", downloadType: str="video", extension: str = ""):
 	videoUrls = Playlist(playlistUrl).video_urls
@@ -60,10 +63,10 @@ if __name__ == "__main__":
 	downloadPath = input("Enter download path (optional)\n")
 	while fileName == "" or fileName is None:
 		fileName = input("Enter file name (optional)\n")
-	if (downloadType == "audio"):
-		extension = input("Enter file extension (optional)\n")
-	else:
-		extension = ""
+	#if (downloadType == "audio"):
+		#extension = input("Enter file extension (optional)\n")
+	#else:
+	extension = ""
 	if (playlist == "y" and (downloadType == "audio" or downloadType == "video")):
 		downloadPlaylist(url, downloadPath, downloadType, extension)
 	elif (downloadType == "video"):
